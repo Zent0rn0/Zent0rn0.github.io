@@ -1,197 +1,77 @@
-import { useState, type PointerEvent } from 'react'
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
-import {
-  ArrowUpRight,
-  Camera,
-  Gamepad2,
-  GitBranch,
-  MessageCircle,
-  MessagesSquare,
-  Music2,
-  Send,
-  X,
-} from 'lucide-react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
-type Panel = 'about' | 'contact' | null
-
-const socials = [
-  { label: 'GitHub', handle: '@Zent0rn0', href: 'https://github.com/Zent0rn0', icon: GitBranch },
-  { label: 'Telegram', handle: '@Zen_torn', href: 'https://t.me/Zen_torn', icon: Send },
-  { label: 'TikTok', handle: '@zentorno42', href: 'https://www.tiktok.com/@zentorno42?_r=1&_t=ZS-985CWH4TL6L', icon: Music2 },
-  { label: 'Instagram', handle: '@jeklin.tv', href: 'https://www.instagram.com/jeklin.tv?igsh=MW10dHducWJ1ZjYwNQ%3D%3D&utm_source=qr', icon: Camera },
-  { label: 'Threads', handle: '@jeklin.tv', href: 'https://www.threads.com/@jeklin.tv?igshid=NTc4MTIwNjQ2YQ==', icon: MessagesSquare },
-  { label: 'Steam', handle: 'zentorno', href: 'https://steamcommunity.com/profiles/76561198885836635', icon: Gamepad2 },
-  { label: 'Reddit', handle: 'u/Embarrassed_You2278', href: 'https://www.reddit.com/u/Embarrassed_You2278/s/zmvgKi0hUn', icon: MessageCircle },
-]
-
-const panelTransition = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 0.8 }
-
-function PrismaticObject() {
-  const reduceMotion = useReducedMotion()
-  const pointerX = useMotionValue(0)
-  const pointerY = useMotionValue(0)
-  const objectX = useSpring(useTransform(pointerX, [-1, 1], [-20, 20]), { stiffness: 75, damping: 20 })
-  const objectY = useSpring(useTransform(pointerY, [-1, 1], [-16, 16]), { stiffness: 75, damping: 20 })
-  const rotateX = useSpring(useTransform(pointerY, [-1, 1], [7, -7]), { stiffness: 70, damping: 20 })
-  const rotateY = useSpring(useTransform(pointerX, [-1, 1], [-9, 9]), { stiffness: 70, damping: 20 })
-  const hazeX = useSpring(useTransform(pointerX, [-1, 1], [-34, 34]), { stiffness: 45, damping: 22 })
-  const hazeY = useSpring(useTransform(pointerY, [-1, 1], [-24, 24]), { stiffness: 45, damping: 22 })
-
-  function trackPointer(event: PointerEvent<HTMLElement>) {
-    if (reduceMotion) return
-    const rect = event.currentTarget.getBoundingClientRect()
-    pointerX.set(((event.clientX - rect.left) / rect.width - 0.5) * 2)
-    pointerY.set(((event.clientY - rect.top) / rect.height - 0.5) * 2)
-  }
-
-  function resetPointer() {
-    pointerX.set(0)
-    pointerY.set(0)
-  }
-
-  return (
-    <section className="artifact-stage" onPointerMove={trackPointer} onPointerLeave={resetPointer} aria-label="Интерактивный цифровой объект">
-      <motion.div className="artifact-haze" style={{ x: reduceMotion ? 0 : hazeX, y: reduceMotion ? 0 : hazeY }} />
-      <div className="artifact-orbit artifact-orbit--outer" />
-      <div className="artifact-orbit artifact-orbit--inner" />
-      <div className="artifact-signal artifact-signal--one" />
-      <div className="artifact-signal artifact-signal--two" />
-      <motion.div
-        className="artifact-object"
-        style={{ x: reduceMotion ? 0 : objectX, y: reduceMotion ? 0 : objectY, rotateX: reduceMotion ? 0 : rotateX, rotateY: reduceMotion ? 0 : rotateY }}
-      >
-        <svg viewBox="0 0 640 640" role="img" aria-label="Призматический артефакт Zentorno" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="shell" x1="110" y1="80" x2="532" y2="570" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#e8e6df" stopOpacity=".94" />
-              <stop offset=".18" stopColor="#7787b2" stopOpacity=".7" />
-              <stop offset=".46" stopColor="#0c0d11" stopOpacity=".84" />
-              <stop offset=".7" stopColor="#d7b4a0" stopOpacity=".6" />
-              <stop offset="1" stopColor="#e8e6df" stopOpacity=".74" />
-            </linearGradient>
-            <linearGradient id="edge" x1="250" y1="80" x2="420" y2="560" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#f7f4e8" />
-              <stop offset=".3" stopColor="#a6b5e6" />
-              <stop offset=".67" stopColor="#e7a78e" />
-              <stop offset="1" stopColor="#f7f4e8" />
-            </linearGradient>
-            <radialGradient id="core" cx="50%" cy="45%" r="58%">
-              <stop stopColor="#dfe9ff" stopOpacity=".92" />
-              <stop offset=".25" stopColor="#8298ce" stopOpacity=".56" />
-              <stop offset=".65" stopColor="#141723" stopOpacity=".14" />
-              <stop offset="1" stopColor="#050506" stopOpacity="0" />
-            </radialGradient>
-            <filter id="grain" x="-30%" y="-30%" width="160%" height="160%">
-              <feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="3" seed="26" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="17" xChannelSelector="R" yChannelSelector="B" />
-            </filter>
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="11" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <clipPath id="bodyClip"><path d="M321 67 520 180 553 389 363 570 139 493 86 279 180 122Z" /></clipPath>
-          </defs>
-          <ellipse cx="322" cy="326" rx="222" ry="218" fill="url(#core)" filter="url(#glow)" opacity=".78" />
-          <g filter="url(#grain)">
-            <path d="M321 67 520 180 553 389 363 570 139 493 86 279 180 122Z" fill="url(#shell)" opacity=".94" />
-            <path d="m321 67 47 218-5 285L139 493l86-229Z" fill="#0a0c12" opacity=".45" />
-            <path d="m321 67 199 113-152 105-47-218Z" fill="#eff0eb" opacity=".32" />
-            <path d="m520 180 33 209-190 181 5-285 152-105Z" fill="#b3c6f8" opacity=".32" />
-            <path d="m86 279 282 6-229 208-53-214Z" fill="#e4a48d" opacity=".23" />
-          </g>
-          <g clipPath="url(#bodyClip)" opacity=".72">
-            <path d="M83 191c109 25 155 73 260 67 107-6 159-54 240-16" fill="none" stroke="#f5f2e7" strokeWidth="1" opacity=".58" />
-            <path d="M74 251c128 18 195 82 302 35 85-38 126-74 202-63" fill="none" stroke="#b8ccff" strokeWidth="1" opacity=".58" />
-            <path d="M91 354c122-39 205 61 309 18 87-36 119-92 178-70" fill="none" stroke="#f2b59f" strokeWidth="1" opacity=".52" />
-            <path d="M108 423c125-53 164 50 298 17 72-18 92-77 140-72" fill="none" stroke="#e9ede5" strokeWidth="1" opacity=".5" />
-          </g>
-          <path d="M321 67 520 180 553 389 363 570 139 493 86 279 180 122Z" fill="none" stroke="url(#edge)" strokeWidth="1.6" opacity=".94" />
-          <path d="m321 67 47 218 185 104M368 285 139 493m229-208L180 122m188 163L363 570" fill="none" stroke="#f6f3e9" strokeWidth=".8" opacity=".54" />
-          <circle cx="322" cy="293" r="12" fill="#eaf5ff" opacity=".9" filter="url(#glow)" />
-          <circle cx="322" cy="293" r="3" fill="#050506" />
-        </svg>
-      </motion.div>
-      <div className="artifact-metadata artifact-metadata--left"><span>znt / 26</span><i /><span>refractive system</span></div>
-      <div className="artifact-metadata artifact-metadata--right"><span>pointer sensitive</span><i /><span>001</span></div>
-    </section>
-  )
+type Social = { name: string; url: string; caption: string };
+type Profile = { name: string; role: string; bio: string; avatar: string; email: string; socials: Social[] };
+const initial: Profile = { name: 'Алекс', role: 'FULL-STACK DEVELOPER', bio: 'Пишу код. Решаю задачи. Постоянно учусь.\nЛюблю простые решения и сложные вызовы.', avatar: './images/developer-avatar.png', email: '', socials: [{ name: 'GitHub', url: '', caption: 'Мой код — без лишних слов' }, { name: 'Telegram', url: '', caption: 'Самый быстрый способ' }, { name: 'LinkedIn', url: '', caption: 'Профессиональная сторона' }, { name: 'X / Twitter', url: '', caption: 'Мысли вне редактора' }] };
+const validProfile = (p: unknown): p is Profile => { if (!p || typeof p !== 'object') return false; const q = p as Profile; return ['name','role','bio','avatar','email'].every(k => typeof q[k as keyof Profile] === 'string') && Array.isArray(q.socials) && q.socials.every(s => s && typeof s.name === 'string' && typeof s.url === 'string' && typeof s.caption === 'string'); };
+const safeUrl = (url: string) => { try { const u = new URL(url); return ['https:', 'http:'].includes(u.protocol) ? u.href : ''; } catch { return ''; } };
+function Icon({ name, size = 22 }: { name: string; size?: number }) {
+ const common = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true as const };
+ if (name.toLowerCase().includes('github')) return <svg {...common} fill="currentColor" stroke="none"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.64.35-1.08.64-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.83c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>;
+ if (name.toLowerCase().includes('telegram')) return <svg {...common}><path d="m21 3-4 18-6-5-4 3v-6L3 11 21 3Z"/><path d="m7 13 14-10-10 13"/></svg>;
+ if (name.toLowerCase().includes('linkedin')) return <svg {...common}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7m4 0v-7m0 3c0-4 6-4 6 0v4"/><path d="M7 7h.01" strokeWidth="2.5"/></svg>;
+ if (name.toLowerCase().includes('twitter')) return <svg {...common}><path d="m4 3 12 18h4L8 3H4Zm0 18 6.4-7.7M20 3l-6.4 7.7"/></svg>;
+ if (name === 'mail') return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg>;
+ if (name === 'arrow') return <svg {...common}><path d="M6 18 18 6M6 6h12v12"/></svg>;
+ if (name === 'copy') return <svg {...common}><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg>;
+ if (name === 'terminal') return <svg {...common}><path d="m5 6 6 6-6 6m9 0h5"/></svg>;
+ if (name === 'settings') return <svg {...common}><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="3" fill="currentColor" stroke="none"/></svg>;
+ return <svg {...common}><path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 1)"/></svg>;
 }
-
+function Particles({ animated }: { animated: boolean }) {
+ const canvas = useRef<HTMLCanvasElement>(null);
+ useEffect(() => {
+  const c = canvas.current; if (!c) return; const ctx = c.getContext('2d'); if (!ctx) return;
+  let width = 0, height = 0, frame = 0, time = 0; const pointer = { x: -1000, y: -1000 };
+  const points = Array.from({ length: 65 }, (_, i) => ({ x: ((i * 137.51) % 997) / 997, y: ((i * 231.73) % 991) / 991, r: i % 4 === 0 ? 1.2 : .65 }));
+  const resize = () => { width = window.innerWidth; height = window.innerHeight; const dpr = Math.min(window.devicePixelRatio || 1, 2); c.width = width*dpr; c.height = height*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); if (!animated) draw(); };
+  const move = (e: PointerEvent) => { pointer.x = e.clientX; pointer.y = e.clientY; };
+  function draw() { if (!ctx) return; ctx.clearRect(0,0,width,height); time += .003; for (let i = 0; i < points.length; i++) { const p = points[i]; const x = p.x*width + (animated ? Math.sin(time+i)*8 : 0); const y = p.y*height + (animated ? Math.cos(time+i)*8 : 0); const dist = Math.hypot(pointer.x-x,pointer.y-y); ctx.fillStyle = `rgba(188,174,235,${.18+(Math.sin(time*2+i)+1)*.14})`; ctx.beginPath(); ctx.arc(x,y,p.r,0,Math.PI*2); ctx.fill(); if (animated && dist < 150) {ctx.strokeStyle=`rgba(176,137,255,${(1-dist/150)*.25})`;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(pointer.x,pointer.y);ctx.stroke();} } if (animated) frame = requestAnimationFrame(draw); }
+  resize(); if (animated) draw(); window.addEventListener('resize',resize); window.addEventListener('pointermove',move); return () => {cancelAnimationFrame(frame);window.removeEventListener('resize',resize);window.removeEventListener('pointermove',move);};
+ }, [animated]);
+ return <canvas ref={canvas} className="particle-canvas" aria-hidden="true"/>;
+}
 export default function App() {
-  const [panel, setPanel] = useState<Panel>(null)
-  const closePanel = () => setPanel(null)
-
-  function togglePanel(next: Exclude<Panel, null>) {
-    setPanel((current) => current === next ? null : next)
-  }
-
-  return (
-    <main className="scene">
-      <div className="scene-noise" aria-hidden="true" />
-      <div className="scene-grid" aria-hidden="true" />
-      <header className="scene-header">
-        <a className="wordmark" href="#top" aria-label="Zentorno — к началу">ZENTORNO<span>®</span></a>
-        <div className="scene-controls" aria-label="Информация">
-          <button className={panel === 'about' ? 'is-active' : ''} onClick={() => togglePanel('about')} aria-expanded={panel === 'about'}>ABOUT</button>
-          <button className={panel === 'contact' ? 'is-active' : ''} onClick={() => togglePanel('contact')} aria-expanded={panel === 'contact'}>CONTACT</button>
-        </div>
-      </header>
-
-      <section id="top" className="hero" aria-labelledby="page-title">
-        <div className="hero-title">
-          <p>Independent developer / BMSTU</p>
-          <h1 id="page-title">Zentorno<span className="hero-mark">.</span></h1>
-        </div>
-        <PrismaticObject />
-        <div className="hero-summary">
-          <span className="summary-index">01</span>
-          <p>Разработчик и студент BMSTU.<br />Собираю вещи для сети.</p>
-        </div>
-        <p className="scene-instruction"><span /> move through the field <span /></p>
-      </section>
-
-      <AnimatePresence>
-        {panel && (
-          <motion.aside
-            className="info-layer"
-            initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
-            transition={panelTransition}
-            aria-label={panel === 'about' ? 'Обо мне' : 'Контакты'}
-          >
-            <div className="layer-heading">
-              <span>{panel === 'about' ? '01 / ABOUT' : '02 / CONTACT'}</span>
-              <button onClick={closePanel} aria-label="Закрыть панель"><X size={16} /></button>
-            </div>
-            {panel === 'about' ? (
-              <div className="about-copy">
-                <p>Мне нравится собирать ясные цифровые вещи из сложных частей — от первого импульса до работающего интерфейса.</p>
-                <div><span>based in</span><strong>moscow / web</strong></div>
-              </div>
-            ) : (
-              <div className="contact-list">
-                {socials.map((social, index) => {
-                  const Icon = social.icon
-                  return (
-                    <a href={social.href} target="_blank" rel="noreferrer" key={social.label}>
-                      <span className="contact-number">0{index + 1}</span>
-                      <Icon size={16} strokeWidth={1.5} />
-                      <span>{social.label}<small>{social.handle}</small></span>
-                      <ArrowUpRight size={15} />
-                    </a>
-                  )
-                })}
-              </div>
-            )}
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      <footer className="scene-footer">
-        <span>© 2026 / ZNT</span>
-        <span>no templates, no noise</span>
-      </footer>
-    </main>
-  )
+ const [profile, setProfile] = useState<Profile>(initial);
+ const [draft, setDraft] = useState<Profile>(initial);
+ const [modal, setModal] = useState<'commands' | 'settings' | null>(null);
+ const [query, setQuery] = useState('');
+ const [notification, setNotification] = useState('');
+ const [notice, setNotice] = useState('');
+ const [animated, setAnimated] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+ const [clock, setClock] = useState('');
+ const dialog = useRef<HTMLDialogElement>(null);
+ const returnFocus = useRef<HTMLElement | null>(null);
+ useEffect(() => { let active = true; let saved = false; try { const p = JSON.parse(localStorage.getItem('dev-profile-v2') || 'null'); if (validProfile(p)) {setProfile(p); saved = true;} } catch {} if (!saved) fetch('./profile.json').then(r => r.ok ? r.json() : null).then(p => {if(active && validProfile(p)) setProfile(p);}).catch(() => {}); return () => {active = false;}; }, []);
+ useEffect(() => { const update = () => setClock(new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' }).format(new Date())); update(); const timer = setInterval(update, 1000); return () => clearInterval(timer); }, []);
+ useEffect(() => {document.title = `${profile.name} — разработчик · На связи`;}, [profile.name]);
+ useEffect(() => { if (modal) { if (!dialog.current?.open) returnFocus.current = document.activeElement as HTMLElement; dialog.current?.showModal();document.body.style.overflow='hidden'; } else {dialog.current?.close();document.body.style.overflow='';returnFocus.current?.focus();} return () => {document.body.style.overflow='';}; }, [modal]);
+ useEffect(() => { const key = (e: KeyboardEvent) => {if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault();setQuery('');setModal(v => v === 'commands' ? null : 'commands');}};window.addEventListener('keydown',key);return () => window.removeEventListener('keydown',key);}, []);
+ useEffect(() => {if (!notification) return;const timer=setTimeout(() => setNotification(''),3500);return () => clearTimeout(timer);}, [notification]);
+ const settings = (message = '') => { setDraft(structuredClone(profile));setNotice(message);setModal('settings'); };
+ const contact = () => {if (profile.email) window.location.href=`mailto:${profile.email}`;else settings('Добавьте ваш email — после сохранения кнопка будет открывать письмо вам.');};
+ const copy = async () => {if(!profile.email) {settings('Укажите email, который посетители смогут скопировать.');return;} try {await navigator.clipboard.writeText(profile.email);setNotification('Email скопирован. Будем на связи!');setModal(null);}catch{setNotice(`Не удалось скопировать автоматически. Ваш email: ${profile.email}`);settings(`Скопируйте адрес вручную: ${profile.email}`);}};
+ const go = (s: Social) => {const url=safeUrl(s.url);if(url) window.open(url,'_blank','noopener,noreferrer');else settings(`Добавьте личную ссылку ${s.name}. Сейчас профиль демонстрационный.`);};
+ const download = () => {const blob=new Blob([JSON.stringify(draft,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='profile.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('Файл скачан. Замените public/profile.json в репозитории, чтобы опубликовать профиль для всех.');};
+ const commands = [...profile.socials.map(s => ({ name: `Открыть ${s.name}`, icon: s.name, action: () => go(s), detail: 'соцсеть' })),{name:'Написать письмо',icon:'mail',action:contact,detail:'контакт'},{name:'Скопировать email',icon:'copy',action:copy,detail:'буфер обмена'},{name: animated ? 'Выключить анимации' : 'Включить анимации',icon:'terminal',action:()=>{setAnimated(!animated);setModal(null);},detail:'интерфейс'},{name:'Настроить профиль',icon:'settings',action:()=>settings(),detail:'персонализация'}].filter(c => c.name.toLowerCase().includes(query.toLowerCase()));
+ return <div className={`site ${animated ? '' : 'no-motion'}`}>
+  <Particles animated={animated}/><div className="ambient-light" aria-hidden="true"/><div className="page-grid" aria-hidden="true"/>
+  <div className="site-shell">
+   <header className="header"><a href="#" className="logo" aria-label="Главная"><span className="logo-mark">a<span>_</span></span><span className="logo-divider"/><span className="logo-label">PERSONAL SPACE</span></a><div className="header-right"><div className="online"><span className="status-dot"/> Открыт к общению</div><button className="command-trigger" onClick={()=>{setQuery('');setModal('commands');}} aria-label="Открыть палитру команд"><Icon name="terminal" size={15}/><kbd>⌘ K</kbd></button></div></header>
+   <main>
+    <section className="hero" aria-labelledby="hero-title"><div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line"/>{profile.role}<span className="small-spark">✳</span></div><h1 id="hero-title">Привет,<br/>я <span className="name-gradient">{profile.name}</span><span className="title-period">.</span><span className="blinking-cursor" aria-hidden="true">_</span></h1><p className="bio">{profile.bio}</p><div className="hero-actions"><button className="primary-button" onClick={contact}><Icon name="mail" size={18}/> Давайте на связи <Icon name="arrow" size={17}/></button><button className="copy-button" onClick={copy} aria-label="Скопировать email" title="Скопировать email"><Icon name="copy" size={18}/></button></div><div className="human-note"><span className="tiny-orbit"/> Человек за кодом. Не очередной AI.</div></div>
+     <div className="visual" onPointerMove={e=>{if(!animated||e.pointerType==='touch') return;const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--rx',`${(e.clientY-r.top-r.height/2)/-45}deg`);e.currentTarget.style.setProperty('--ry',`${(e.clientX-r.left-r.width/2)/45}deg`);}} onPointerLeave={e=>{e.currentTarget.style.setProperty('--rx','0deg');e.currentTarget.style.setProperty('--ry','0deg');}}>
+      <span className="visual-label mono">&lt;developer /&gt;</span><span className="cross cross-one">+</span><span className="cross cross-two">+</span><div className="orbital-system"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="orbit-track"><span className="orbit-light"/></div><div className="avatar-halo"/><div className="avatar-frame"><img src={profile.avatar || initial.avatar} alt={`Аватар — ${profile.name}`} onError={e=>{if(!e.currentTarget.src.endsWith('/images/developer-avatar.png')) e.currentTarget.src=initial.avatar;}}/><div className="avatar-shine"/></div><div className="orbit-point point-one"/><div className="orbit-point point-two"/><div className="floating-chip code-chip"><span>&lt;/&gt;</span></div><div className="floating-chip star-chip">✳</div><div className="identity-tag"><span className="status-dot"/><span>human.js</span><span className="tag-separator"/><span className="tag-version">v.1.0.0</span></div></div>
+      <div className="code-window"><div className="code-window-header"><span/><span/><span/><span className="code-filename">about.ts</span><Icon name="terminal" size={11}/></div><div className="code-lines"><div><span className="line-number">1</span><span className="syntax-purple">const</span> me <span className="syntax-purple">=</span> {'{'}</div><div><span className="line-number">2</span>&nbsp; mindset: <span className="syntax-green">'always learning'</span>,</div><div><span className="line-number">3</span>&nbsp; coffee: <span className="syntax-orange">Infinity</span>,</div><div><span className="line-number">4</span>&nbsp; bugs: <span className="syntax-purple">'it’s a feature'</span></div><div><span className="line-number">5</span>{'}'}<span className="syntax-purple">;</span><span className="code-cursor"/></div></div></div><div className="visual-caption"><span className="caption-line"/> BUILT DIFFERENT. ONE LINE AT A TIME.</div>
+     </div>
+    </section>
+    <section className="connect" id="contacts" aria-labelledby="connect-title"><div className="connect-heading"><h2 id="connect-title"><span className="section-index">01 /</span> Найдём общий язык</h2><span className="connect-aside">В интернете я здесь <span>↙</span></span></div><div className="social-grid" style={{'--social-count':Math.min(profile.socials.length+1,5)} as CSSProperties}>{profile.socials.map((s,i)=><a key={`${s.name}-${i}`} className="social-card" href={safeUrl(s.url)||'#contacts'} target={safeUrl(s.url)?'_blank':undefined} rel="noopener noreferrer" onClick={e=>{if(!safeUrl(s.url)){e.preventDefault();go(s);}}}><div className="social-top"><span className={`social-icon icon-${s.name.toLowerCase().split(' ')[0]}`}><Icon name={s.name}/></span><Icon name="arrow" size={16}/></div><div><h3>{s.name}</h3><p>{s.caption}</p></div><span className="card-glow"/></a>)}<a className="social-card email-card" href={profile.email?`mailto:${profile.email}`:'#contacts'} onClick={e=>{if(!profile.email){e.preventDefault();contact();}}}><div className="social-top"><span className="social-icon"><Icon name="mail"/></span><Icon name="arrow" size={16}/></div><div><h3>Email <span className="email-dot"/></h3><p>{profile.email || 'Для хороших разговоров'}</p></div><span className="card-glow"/></a></div></section>
+   </main>
+   <footer className="footer"><div className="footer-left"><span className="footer-code">&lt;/&gt;</span><span>Меньше слов. Больше кода.</span></div><button className="footer-command" onClick={()=>{setQuery('');setModal('commands');}}>Есть и короткий путь <kbd>⌘</kbd><kbd>K</kbd></button><div className="footer-right"><span className="clock"><span className="clock-dot"/>{clock} <span>UTC</span></span><button className="settings-button" onClick={()=>settings()} title="Настроить профиль" aria-label="Настроить профиль"><Icon name="settings" size={16}/></button></div></footer>
+  </div><div className="bottom-beam" aria-hidden="true"/>
+  {notification && <div className="toast" role="status"><span>✓</span>{notification}</div>}
+  <dialog ref={dialog} className={`dialog ${modal==='settings'?'settings-dialog':'command-dialog'}`} onCancel={()=>setModal(null)} onClick={e=>{if(e.target===e.currentTarget)setModal(null);}}>
+   {modal==='commands'?<><div className="command-search"><Icon name="terminal"/><input autoFocus aria-label="Поиск команды" placeholder="Куда отправимся?" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&commands[0])commands[0].action();}}/><button onClick={()=>setModal(null)} aria-label="Закрыть палитру"><kbd>esc</kbd></button></div><div className="command-section-label">БЫСТРЫЕ ДЕЙСТВИЯ</div><div className="command-list">{commands.length?commands.map(c=><button key={c.name} className="command-item" onClick={c.action}><Icon name={c.icon} size={18}/><span>{c.name}</span><small>{c.detail}</small><span className="command-return">↵</span></button>):<p className="no-results">Такой команды нет. Попробуйте «email» или «профиль».</p>}</div><div className="command-help"><span><kbd>tab</kbd> навигация <kbd>↵</kbd> выбрать</span><span>Ваш маленький command center.</span></div></>:modal==='settings'?<><div className="settings-title"><div><div className="dialog-eyebrow">CONFIG / PROFILE</div><h2>Это ваше пространство<span>.</span></h2></div><button className="close-button" onClick={()=>setModal(null)} aria-label="Закрыть">✕</button></div><p className="settings-intro">Замените демо-данные своими. Сохранение действует в этом браузере; для публикации скачайте конфигурацию.</p>{notice&&<div className="editor-notice" role="status">{notice}</div>}<form onSubmit={e=>{e.preventDefault();if(draft.socials.some(s=>s.url&&!safeUrl(s.url))){setNotice('Ссылки должны начинаться с https:// или http://.');return;}setProfile(draft);try{localStorage.setItem('dev-profile-v2',JSON.stringify(draft));setNotification('Профиль сохранён в этом браузере');}catch{setNotification('Профиль обновлён. Хранилище недоступно — скачайте конфигурацию.');}setModal(null);}}><div className="field-grid"><label>Имя<input value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})} maxLength={30} required/></label><label>Специализация<input value={draft.role} onChange={e=>setDraft({...draft,role:e.target.value})} maxLength={55} required/></label></div><label>Пара слов о себе<textarea rows={3} value={draft.bio} onChange={e=>setDraft({...draft,bio:e.target.value})} maxLength={220} required/></label><div className="field-grid"><label>Email<input type="email" placeholder="you@example.com" value={draft.email} onChange={e=>setDraft({...draft,email:e.target.value})}/></label><label>Ссылка на аватар<input placeholder="https://… или ./images/avatar.png" value={draft.avatar} onChange={e=>setDraft({...draft,avatar:e.target.value})}/></label></div><div className="links-label"><span>ВАШИ ССЫЛКИ</span><button type="button" onClick={()=>setDraft({...draft,socials:[...draft.socials,{name:'',url:'',caption:''}]})}>+ Добавить</button></div><div className="social-fields">{draft.socials.map((s,i)=><div className="social-field" key={i}><input aria-label={`Название ссылки ${i+1}`} placeholder="Название" required value={s.name} maxLength={24} onChange={e=>setDraft({...draft,socials:draft.socials.map((v,j)=>j===i?{...v,name:e.target.value}:v)})}/><input type="url" aria-label={`Адрес ${s.name}`} placeholder="https://…" value={s.url} onChange={e=>setDraft({...draft,socials:draft.socials.map((v,j)=>j===i?{...v,url:e.target.value}:v)})}/><button type="button" aria-label={`Удалить ${s.name}`} onClick={()=>setDraft({...draft,socials:draft.socials.filter((_,j)=>j!==i)})}>×</button><input className="caption-input" aria-label={`Описание ${s.name}`} placeholder="Короткая подпись" value={s.caption} maxLength={55} onChange={e=>setDraft({...draft,socials:draft.socials.map((v,j)=>j===i?{...v,caption:e.target.value}:v)})}/></div>)}</div><div className="settings-actions"><button className="primary-button" type="submit">Сохранить <Icon name="arrow" size={16}/></button><button className="export-button" type="button" onClick={download}>Скачать profile.json ↓</button></div><p className="publish-note">Для GitHub Pages замените файл <code>public/profile.json</code> в репозитории скачанным файлом и выполните push.</p></form></>:null}
+  </dialog>
+ </div>;
 }
