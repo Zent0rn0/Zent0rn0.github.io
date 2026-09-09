@@ -41,11 +41,9 @@
 
 ## GitHub Pages
 
-Workflow уже находится в `.github/workflows/deploy.yml`.
+Деплой настроен и выполняется автоматически.
 
-1. Загрузите проект вместе с папкой `.github` в GitHub-репозиторий, ветку `main`.
-2. Settings → Pages → Build and deployment → Source → GitHub Actions.
-3. Actions → Deploy portfolio to GitHub Pages → Run workflow, либо сделайте новый push в main.
-4. Дождитесь успешного deployment. Ссылка появится в Settings → Pages.
-
-Workflow собирает `dist` с относительным base (`--base=./`) и публикует официальными GitHub Actions. Поэтому сайт работает и в подпапке репозитория. Публикация ещё не выполнена: требуется ваш репозиторий и доступ владельца. Не передавайте пароли или персональные токены в переписке.
+- Workflow `.github/workflows/deploy.yml` ставит зависимости (`npm ci`), собирает `dist` (`vite build` с относительным base `--base=./`) и публикует его официальными GitHub Actions. Относительный base позволяет сайту работать и в корне домена, и в подпапке репозитория.
+- В Settings → Pages в качестве Source выбран GitHub Actions.
+- Каждый push в `main` запускает новый деплой; статус и логи — во вкладке Actions.
+- Адрес сайта: https://zent0rn0.github.io/
