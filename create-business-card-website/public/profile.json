@@ -1,0 +1,13 @@
+{
+  "name": "Алекс",
+  "role": "FULL-STACK DEVELOPER",
+  "bio": "Пишу код. Решаю задачи. Постоянно учусь.\nЛюблю простые решения и сложные вызовы.",
+  "avatar": "./images/developer-avatar.png",
+  "email": "",
+  "socials": [
+    { "name": "GitHub", "url": "", "caption": "Мой код — без лишних слов" },
+    { "name": "Telegram", "url": "", "caption": "Самый быстрый способ" },
+    { "name": "LinkedIn", "url": "", "caption": "Профессиональная сторона" },
+    { "name": "X / Twitter", "url": "", "caption": "Мысли вне редактора" }
+  ]
+}
