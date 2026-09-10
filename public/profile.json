@@ -3,12 +3,12 @@
   "role": "DEVELOPER / BUILDER",
   "bio": "Код, интерфейсы и идеи, которые хочется открыть ещё раз.",
   "avatar": "./images/developer-avatar.jpg",
-  "email": "",
+  "email": "jeklin.tv@mail.ru",
   "socials": [
-    { "name": "GitHub", "url": "https://github.com/zentorno", "caption": "@zentorno" },
+    { "name": "GitHub", "url": "https://github.com/Zent0rn0", "caption": "@Zent0rn0" },
     { "name": "Discord", "url": "", "caption": "zentorno" },
-    { "name": "Telegram", "url": "https://t.me/zentorno", "caption": "@zentorno" },
-    { "name": "Instagram", "url": "https://www.instagram.com/zentorno/", "caption": "@zentorno" },
-    { "name": "TikTok", "url": "https://www.tiktok.com/@zentorno", "caption": "@zentorno" }
+    { "name": "Telegram", "url": "https://t.me/zeintorno", "caption": "@zeintorno" },
+    { "name": "Instagram", "url": "https://www.instagram.com/jeklin.tv?stkn=MW10dHducWJ1ZjYwNQ%3D%3D&utm_source=qr", "caption": "@jeklin.tv" },
+    { "name": "TikTok", "url": "https://www.tiktok.com/@zentorno42?_r=1&_t=ZS-99cSUIP7EY4", "caption": "@zentorno42" }
   ]
 }
