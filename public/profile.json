@@ -1,0 +1,14 @@
+{
+  "name": "zentorno",
+  "role": "DEVELOPER / BUILDER",
+  "bio": "Код, интерфейсы и идеи, которые хочется открыть ещё раз.",
+  "avatar": "./images/developer-avatar.jpg",
+  "email": "",
+  "socials": [
+    { "name": "GitHub", "url": "https://github.com/zentorno", "caption": "@zentorno" },
+    { "name": "Discord", "url": "", "caption": "zentorno" },
+    { "name": "Telegram", "url": "https://t.me/zentorno", "caption": "@zentorno" },
+    { "name": "Instagram", "url": "https://www.instagram.com/zentorno/", "caption": "@zentorno" },
+    { "name": "TikTok", "url": "https://www.tiktok.com/@zentorno", "caption": "@zentorno" }
+  ]
+}
