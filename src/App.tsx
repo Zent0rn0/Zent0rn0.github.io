@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import Avatar3D from './avatar/Avatar3D';
 
 type Social = { name: string; url: string; caption: string };
 type Profile = { name: string; role: string; bio: string; avatar: string; email: string; socials: Social[] };
@@ -46,7 +47,7 @@ export default function App() {
     arch.current?.style.setProperty('--dx', `${(e.clientX / window.innerWidth - .5) * -14}px`);
     arch.current?.style.setProperty('--dy', `${(e.clientY / window.innerHeight - .5) * -10}px`);
   };
-  const email = profile.email.trim();
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email.trim()) ? profile.email.trim() : '';
 
   return <div className="site" onPointerMove={drift}>
     <div className="glow" aria-hidden="true" />
@@ -64,7 +65,7 @@ export default function App() {
 
       <figure className="arch" ref={arch}>
         <div className="arch-frame" />
-        <div className="arch-window"><img src={profile.avatar || initial.avatar} alt={`Аватар ${profile.name}`} /></div>
+        <div className="arch-window"><Avatar3D fallback={profile.avatar || initial.avatar} alt={`Аватар ${profile.name}`} /></div>
       </figure>
 
       <section className="contacts reveal" style={{ '--d': '1120ms' } as CSSProperties} aria-labelledby="contacts-title">
