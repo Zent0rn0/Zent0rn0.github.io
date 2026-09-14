@@ -17,6 +17,13 @@ const copyText = async (text: string) => {
   }
 };
 const delay = (ms: number) => ({ '--d': `${ms}ms` }) as JSX.CSSProperties;
+// dust drifting through the backdrop; seeded so the prerendered markup and the hydrated one match
+const dust = Array.from({ length: 28 }, (_, i) => {
+  const r = (n: number) => { const s = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return s - Math.floor(s); };
+  const at = (v: number, unit: string) => `${v.toFixed(2)}${unit}`;
+  return { '--x': at(r(1) * 100, '%'), '--y': at(35 + r(2) * 65, '%'), '--s': at(1 + r(3) * 2.2, 'px'), '--t': at(16 + r(4) * 16, 's'),
+    '--delay': at(-r(5) * 32, 's'), '--dx': at((r(6) - 0.5) * 90, 'px'), '--o': (0.25 + r(7) * 0.55).toFixed(2) } as JSX.CSSProperties;
+});
 
 function Icon({ name }: { name: 'arrow' | 'copy' | 'check' }) {
   const common = { width: 14, height: 14, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': true } as const;
@@ -54,7 +61,10 @@ export default function App() {
   const socials = profile.socials.filter(s => s.name && (safeUrl(s.url) || s.caption)).sort((a, b) => Number(!safeUrl(a.url)) - Number(!safeUrl(b.url)));
 
   return <div class="site">
-    <div class="glow" aria-hidden="true" />
+    <div class="backdrop" aria-hidden="true">
+      <div class="fog" /><div class="fog" />
+      <div class="dust">{dust.map((style, i) => <i key={i} style={style} />)}</div>
+    </div>
     <header class="topbar reveal" style={delay(900)}>
       <a class="mark" href="#top" aria-label="В начало"><span class="mark-letters">zt</span><i /><span class="label">Личная карточка</span></a>
       {email && <a class="topbar-link label" href={`mailto:${email}`}>Написать <Icon name="arrow" /></a>}
@@ -68,7 +78,9 @@ export default function App() {
       </section>
 
       <figure class="arch">
+        <div class="arch-echo" /><div class="arch-echo" />
         <div class="arch-frame" />
+        <svg class="arch-key" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c.7 6.2 5.8 11.3 12 12-6.2.7-11.3 5.8-12 12-.7-6.2-5.8-11.3-12-12C6.2 11.3 11.3 6.2 12 0Z" /></svg>
         <div class="arch-window"><Avatar3D fallback={profile.avatar} alt={`Аватар ${profile.name}`} /></div>
       </figure>
 
@@ -78,7 +90,7 @@ export default function App() {
         {email && <div class="mail"><span class="label">Почта</span><a href={`mailto:${email}`}>{email}</a></div>}
       </section>
 
-      <h1 class="name" aria-label={profile.name}>{[...profile.name].map((ch, i) => <span key={i} aria-hidden="true" style={{ '--i': i } as JSX.CSSProperties}>{ch}</span>)}</h1>
+      <h1 class="name" data-text={profile.name}><span class="name-text">{profile.name}</span></h1>
     </main>
     <div class="grain" aria-hidden="true" />
   </div>;
