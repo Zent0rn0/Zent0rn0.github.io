@@ -1,5 +1,5 @@
 {
-  "name": "react-vite-tailwind",
+  "name": "zentorno-card",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,29 +7,23 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "avatar:bake": "node scripts/bake-avatar.mjs",
     "avatar:import": "node scripts/import-avatar.mjs"
   },
   "dependencies": {
-    "clsx": "2.1.1",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "tailwind-merge": "3.4.0",
+    "preact": "10.29.8",
+    "preact-render-to-string": "6.7.0",
     "three": "0.180.0"
   },
   "devDependencies": {
+    "@babel/core": "7.29.7",
     "@gltf-transform/core": "4.2.1",
     "@gltf-transform/extensions": "4.2.1",
     "@gltf-transform/functions": "4.2.1",
-    "@tailwindcss/vite": "4.1.17",
+    "@preact/preset-vite": "2.10.6",
     "@types/node": "22.19.17",
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
     "@types/three": "0.180.0",
-    "@vitejs/plugin-react": "5.1.1",
     "meshoptimizer": "0.25.0",
     "sharp": "0.35.4",
-    "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
     "vite": "7.3.2"
   }

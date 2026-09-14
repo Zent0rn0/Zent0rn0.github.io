@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Stage } from './stage';
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/knight.glb`;
@@ -43,5 +43,5 @@ export default function Avatar3D({ fallback, alt }: { fallback: string; alt: str
   }, [failed]);
 
   if (failed) return <img src={fallback} alt={alt} />;
-  return <div ref={host} className="avatar-3d" role="img" aria-label={alt} />;
+  return <div ref={host} class="avatar-3d" role="img" aria-label={alt} />;
 }
