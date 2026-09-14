@@ -1,9 +1,9 @@
 {
   "name": "zentorno",
-  "role": "DEVELOPER / BUILDER",
-  "bio": "Код, интерфейсы и идеи, которые хочется открыть ещё раз.",
+  "role": "Разработка и жизнь в сети",
+  "bio": "Пишу код, веду соцсети и открыт к общению. Здесь собраны все мои страницы и способы связаться.",
   "avatar": "./images/developer-avatar.jpg",
-  "email": ".",
+  "email": "zentorno.job@gmail.com",
   "socials": [
     { "name": "GitHub", "url": "https://github.com/Zent0rn0", "caption": "@Zent0rn0" },
     { "name": "Discord", "url": "", "caption": "zentorno" },

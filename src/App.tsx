@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import Avatar3D from './avatar/Avatar3D';
+import { brandPaths } from './brand-icons';
 import data from '../public/profile.json';
 
 type Social = { name: string; url: string; caption: string };
@@ -15,7 +16,6 @@ const copyText = async (text: string) => {
     const ok = document.execCommand('copy'); area.remove(); return ok;
   }
 };
-const roman = (n: number) => [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']].reduce((out, [v, s]) => { while (n >= (v as number)) { out += s; n -= v as number; } return out; }, '');
 const delay = (ms: number) => ({ '--d': `${ms}ms` }) as JSX.CSSProperties;
 
 function Icon({ name }: { name: 'arrow' | 'copy' | 'check' }) {
@@ -25,11 +25,21 @@ function Icon({ name }: { name: 'arrow' | 'copy' | 'check' }) {
   return <svg {...common}><path d="M7 17 17 7M8 7h9v9" /></svg>;
 }
 
-function ContactRow({ social, index }: { social: Social; index: number }) {
+// brand glyph matched by network name; anything unknown gets a neutral globe
+function SocialIcon({ name }: { name: string }) {
+  const path = brandPaths[name.toLowerCase().replace(/[^a-z]/g, '')];
+  return <span class="contact-icon" aria-hidden="true">
+    {path
+      ? <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d={path} /></svg>
+      : <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></svg>}
+  </span>;
+}
+
+function ContactRow({ social }: { social: Social }) {
   const [copied, setCopied] = useState(false);
   const url = safeUrl(social.url);
   const inner = <>
-    <span class="contact-index">{roman(index + 1)}</span>
+    <SocialIcon name={social.name} />
     <span class="contact-name">{social.name}</span>
     <span class="contact-handle">{copied ? 'скопировано' : social.caption}</span>
     <Icon name={url ? 'arrow' : copied ? 'check' : 'copy'} />
@@ -53,7 +63,7 @@ export default function App() {
     <main id="top" class="stage">
       <section class="intro reveal" style={delay(1000)}>
         <p class="kicker label"><i />{profile.role}</p>
-        <p class="greeting">Привет.</p>
+        <p class="greeting">Привет, я на связи.</p>
         <p class="bio">{profile.bio}</p>
       </section>
 
@@ -63,8 +73,8 @@ export default function App() {
       </figure>
 
       <section class="contacts reveal" style={delay(1120)} aria-labelledby="contacts-title">
-        <div class="contacts-head"><h2 id="contacts-title">Где меня найти</h2><span class="label">Index</span></div>
-        <ul class="contact-list">{socials.map((s, i) => <ContactRow key={s.name} social={s} index={i} />)}</ul>
+        <div class="contacts-head"><h2 id="contacts-title">Где меня найти</h2><span class="label">Соцсети</span></div>
+        <ul class="contact-list">{socials.map(s => <ContactRow key={s.name} social={s} />)}</ul>
         {email && <div class="mail"><span class="label">Почта</span><a href={`mailto:${email}`}>{email}</a></div>}
       </section>
 
